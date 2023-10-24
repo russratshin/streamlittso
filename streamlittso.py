@@ -41,10 +41,11 @@ st.markdown("""
         </style>
         """, unsafe_allow_html=True)
 
-
-conn = st.experimental_connection('snowpark')
+session = get_active_session()
+# conn = st.experimental_connection('snowpark')
 s_query = "SELECT TABLE_CATALOG || '.' || TABLE_SCHEMA || '.' || TABLE_NAME AS TABLE_NAME FROM information_schema.tables WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY 1;"
-df = conn.query(s_query, ttl=600)
+# df = conn.query(s_query, ttl=600)
+df = session.sql(s_query).collect()
 
 with st.container():
 
