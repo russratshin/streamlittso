@@ -1,0 +1,6 @@
+streamlit
+pandas
+numpy
+json
+time
+snowflake-snowpark-python
