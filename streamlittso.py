@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import time
+from snowflake.snowpark.context import get_active_session
 
 st.set_page_config(layout="wide")
 st.markdown("""
