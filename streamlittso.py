@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import json
 import time
-from snowflake.snowpark.context import get_active_session
 
 st.set_page_config(layout="wide")
 st.markdown("""
@@ -42,11 +41,10 @@ st.markdown("""
         </style>
         """, unsafe_allow_html=True)
 
-session = get_active_session()
-# conn = st.experimental_connection('snowpark')
+
+conn = st.experimental_connection('snowpark')
 s_query = "SELECT TABLE_CATALOG || '.' || TABLE_SCHEMA || '.' || TABLE_NAME AS TABLE_NAME FROM information_schema.tables WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY 1;"
-# df = conn.query(s_query, ttl=600)
-df = session.sql(s_query).collect()
+df = conn.query(s_query, ttl=600)
 
 with st.container():
 
@@ -62,7 +60,7 @@ with st.container():
             col1a, col2a = st.columns([6, 1])
 
             with col1a:            
-                my_color = st.selectbox('Select a Table', df["TABLE_NAME"], label_visibility="collapsed", index=0)
+                my_table = st.selectbox('Select a Table', df["TABLE_NAME"], label_visibility="collapsed", index=0)
 
             with col2a:
                 submitted = st.form_submit_button('Submit')
@@ -96,12 +94,12 @@ with st.container():
         """, height=0, width=0)
 
 
-    a_color = my_color.split(".")
-    my_color_1 = ""
-    for my_color_0 in a_color:
-        my_color_1 += "\"" + my_color_0 + "\"."
-    my_color_1 = my_color_1[0:len(my_color_1) - 1]
-    s_query = "SELECT * FROM " + my_color_1 + " d LIMIT 10000;"
+    a_table = my_table.split(".")
+    my_table_1 = ""
+    for my_table_0 in a_table:
+        my_table_1 += "\"" + my_table_0 + "\"."
+    my_table_1 = my_table_1[0:len(my_table_1) - 1]
+    s_query = "SELECT * FROM " + my_table_1 + " d LIMIT 10000;"
     df_data = conn.query(s_query, ttl=600)
     df_data = df_data.fillna(value='Null')
     o_df_data = json.loads(df_data.to_json(orient='table', index=False))
